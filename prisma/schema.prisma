@@ -1,0 +1,75 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url は prisma.config.ts で管理しているので不要
+}
+
+model Monster {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String
+  
+  // 👇 ここを変更！Enumは後で追加できるので、まずはStringで確実に動かす
+  // type        MonsterType? 
+  type        String?      
+
+  hp          Int?
+  isAiGenerated Boolean @default(false)
+  aiPrompt      String?
+
+  // 👇 【重要】Userとのリレーションを削除し、ただのID(文字列)にする
+  userId      String   
+  // user       User     @relation(...) 👈 削除！
+
+  likes       Like[]
+  comments    Comment[]
+  collectedBy Collection[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Like {
+  id        String   @id @default(uuid()) // 複合IDが難しい場合用に追加
+  userId    String   // リレーションなし
+  monsterId String
+  
+  // user User ... 👈 削除
+  monster   Monster  @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, monsterId]) // 同じ人が2回いいねできないようにする
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String   // リレーションなし
+  monsterId String
+
+  // user User ... 👈 削除
+  monster   Monster  @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+}
+
+model Collection {
+  id        String   @id @default(uuid())
+  userId    String   // リレーションなし
+  monsterId String
+  
+  // user User ... 👈 削除
+  monster   Monster  @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, monsterId])
+}
