@@ -1,11 +1,12 @@
 // app/signup/page.tsx
 import { signup } from "@/app/actions/auth"; // 👈 さっき直した Server Action を使う
 
-export default function SignupPage({
+export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: { message: string };
+  searchParams: Promise<{ message: string }>;
 }) {
+  const { message } = await searchParams;
   return (
     <div className="p-10 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">アカウント登録</h1>
@@ -31,10 +32,8 @@ export default function SignupPage({
         </button>
 
         {/* メッセージ表示エリア */}
-        {searchParams?.message && (
-          <p className="mt-4 text-red-500 bg-red-50 p-2 rounded">
-            {searchParams.message}
-          </p>
+        {message && (
+          <p className="mt-4 text-red-500 bg-red-50 p-2 rounded">{message}</p>
         )}
       </form>
     </div>
