@@ -1,92 +1,97 @@
-// components/ImageUploader.tsx
 "use client";
 
-import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { v4 as uuidv4 } from "uuid"; // ファイル名が被らないようにするツール
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-hot-toast";
 
-// 親（呼び出し元）にURLを渡すための設定
 type Props = {
   onUploadComplete: (url: string) => void;
+  folderPath?: string;
 };
-
-export default function ImageUploader({ onUploadComplete }: Props) {
+export default function ImageUploader({
+  onUploadComplete,
+  folderPath = "monsters",
+}: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // 1. ファイルが選択された時の処理
+  //入力受け取り
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
+      if (!selectedFile.type.startsWith("image/")) {
+        toast.error("画像ファイルを選択してください");
+        return;
+      }
       setFile(selectedFile);
-      // プレビュー用にURLを一時作成
       setPreviewUrl(URL.createObjectURL(selectedFile));
     }
   };
-
-  // 2. アップロードボタンが押された時の処理
+  //アップロード
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file) {
+      toast.error("ファイルが選択されていません");
+      return;
+    }
     setUploading(true);
-
+    const loadingToastId = toast.loading("アップロード中...");
     try {
       const supabase = createClient();
-
-      // ファイル名をランダムにする（被り防止）
-      // 例: "monster-1234-5678.png"
-      const fileExt = file.name.split(".").pop();
+      //ファイル名の被り対策
+      const fileExt = file?.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const filePath = `${folderPath}/${user?.id}/${fileName}`;
 
-      // Supabaseにアップロード！
+      //storageへアップロード
       const { error: uploadError } = await supabase.storage
-        .from("monsters") // 👈 作ったバケット名
+        .from("images")
         .upload(filePath, file);
 
-      if (uploadError) {
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
-      // アップロード成功したら、公開用URLを取得
-      const { data } = supabase.storage.from("monsters").getPublicUrl(filePath);
+      //strogeにアップロードした画像の取得のためのURL（公開URL）を親に送信
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(filePath);
+      onUploadComplete(publicUrl);
+      toast.success("アップロード完了！", { id: loadingToastId });
 
-      // 親コンポーネントにURLを渡す
-      onUploadComplete(data.publicUrl);
-      alert("アップロード完了！");
+      //エラー処理
     } catch (error: any) {
-      alert("アップロード失敗: " + error.message);
+      toast.error("失敗しました: " + error.message, { id: loadingToastId });
     } finally {
       setUploading(false);
     }
   };
-
   return (
-    <div className="border p-4 rounded bg-gray-50">
+    <div className="flex flex-col items-center gap-4 w-full">
+      {/* デザインを少し調整: inputをそのまま表示するか、labelで隠すかはお好みで */}
       <input
         type="file"
-        accept="image/*"
         onChange={handleFileChange}
-        className="mb-4"
+        accept="image/*"
+        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 text-sm text-gray-500"
       />
 
-      {/* プレビュー表示エリア */}
       {previewUrl && (
-        <div className="mb-4">
-          <img
-            src={previewUrl}
-            alt="プレビュー"
-            className="w-32 h-32 object-cover rounded border"
-          />
-        </div>
+        <img
+          src={previewUrl}
+          alt="プレビュー"
+          className="w-32 h-32 object-cover rounded-full border shadow-sm" // アイコン用に丸くしても良いかも
+        />
       )}
 
       <button
         onClick={handleUpload}
         disabled={!file || uploading}
-        className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
+        className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 disabled:opacity-50 transition w-full"
       >
-        {uploading ? "アップロード中..." : "画像を決定"}
+        {uploading ? "送信中..." : "アップロードする"}
       </button>
     </div>
   );

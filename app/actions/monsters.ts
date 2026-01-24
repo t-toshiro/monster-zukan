@@ -25,4 +25,5 @@ export async function createMonster(formData: FormData) {
       userId: user.id,
     },
   });
+  redirect("/");
 }
