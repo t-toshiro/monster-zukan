@@ -2,6 +2,7 @@
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import { Toaster } from "react-hot-toast";
+import React from "react";
 
 export const metadata = {
   title: "Monster Zukan",
@@ -10,8 +11,10 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="ja">
@@ -22,6 +25,7 @@ export default function RootLayout({
         {/* 右側: メインコンテンツエリア */}
         {/* ml-64 はサイドバーの幅(w-64)分だけ右にずらすための指定です */}
         <main className="flex-1 ml-64 min-h-screen">{children}</main>
+        {modal}
       </body>
     </html>
   );
