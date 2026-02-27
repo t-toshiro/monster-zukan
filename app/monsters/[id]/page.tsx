@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Calendar } from "lucide-react"; // use は削除してOK
 import MonsterDetail from "@/app/components/MonsterDetail";
+import { createClient } from "@/utils/supabase/server";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,6 +16,11 @@ export default async function MonsterDetailPage({ params }: Props) {
   const monster = await prisma.monster.findUnique({
     where: { id: id },
   });
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!monster) {
     notFound();
@@ -37,7 +43,7 @@ export default async function MonsterDetailPage({ params }: Props) {
         </Link>
       </div>
 
-      <MonsterDetail monster={monster} />
+      <MonsterDetail monster={monster} currentUserId={user?.id} />
     </div>
   );
 }

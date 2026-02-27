@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react"; // アイコン用
-import { on } from "events";
 
 export default function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
