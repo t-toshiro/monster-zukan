@@ -55,7 +55,6 @@ export async function deleteMonster(id: string) {
     console.error("モンスターの削除に失敗しました。", error);
     throw new Error("モンスターの削除に失敗しました。");
   }
-  redirect("/");
 }
 
 export async function updataMonster(id: string, formData: FormData) {
@@ -83,5 +82,4 @@ export async function updataMonster(id: string, formData: FormData) {
     console.error("モンスターの更新に失敗しました。", error);
     throw new Error("モンスターの更新に失敗しました。");
   }
-  redirect("/");
 }
