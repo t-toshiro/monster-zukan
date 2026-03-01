@@ -83,3 +83,37 @@ export async function updataMonster(id: string, formData: FormData) {
     throw new Error("モンスターの更新に失敗しました。");
   }
 }
+
+export async function toggleLike(monsterId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return redirect("/login");
+
+  try {
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        monsterId: monsterId,
+        userId: user.id,
+      },
+    });
+    if (existingLike) {
+      await prisma.like.delete({
+        where: { id: existingLike.id },
+      });
+    } else {
+      await prisma.like.create({
+        data: {
+          monsterId: monsterId,
+          userId: user.id,
+        },
+      });
+    }
+    revalidatePath("/");
+    revalidatePath(`/monsters/${monsterId}`);
+  } catch (error) {
+    console.error("いいねの登録に失敗しました。", error);
+    throw new Error("いいねの登録に失敗しました。");
+  }
+}

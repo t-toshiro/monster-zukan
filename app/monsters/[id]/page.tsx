@@ -15,6 +15,7 @@ export default async function MonsterDetailPage({ params }: Props) {
 
   const monster = await prisma.monster.findUnique({
     where: { id: id },
+    include: { likes: true },
   });
 
   const supabase = await createClient();

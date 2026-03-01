@@ -5,6 +5,7 @@ import { Calendar } from "lucide-react";
 import DeleteButton from "./DeleteButton";
 import { useState } from "react";
 import MonsterEditForm from "./MonsterEditForm";
+import LikeButton from "./LikeButton";
 
 type Props = {
   monster: {
@@ -14,12 +15,17 @@ type Props = {
     imageUrl: string | null;
     createdAt: Date;
     description: string;
+    likes: { userId: string }[];
   };
   currentUserId: string | undefined;
 };
 
 export default function MonsterDetail({ monster, currentUserId }: Props) {
   const [isEditing, setEditing] = useState(false);
+  const likesCount = monster.likes.length;
+  const isLikedByMe = currentUserId
+    ? monster.likes.some((like) => like.userId === currentUserId)
+    : false;
 
   return (
     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100 h-full">
@@ -70,9 +76,13 @@ export default function MonsterDetail({ monster, currentUserId }: Props) {
             </div>
 
             <div className="mt-12 pt-6">
-              <button className="w-full py-4 rounded-2xl bg-gray-900 text-white font-bold text-lg hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                <span>❤️</span> いいね！（未実装）
-              </button>
+              <div className="w-full flex mb-4">
+                <LikeButton
+                  monsterId={monster.id}
+                  initialLikesCount={likesCount}
+                  initialIsLiked={isLikedByMe}
+                />
+              </div>
               {monster.userId === currentUserId && (
                 <>
                   <button
