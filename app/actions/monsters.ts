@@ -117,3 +117,19 @@ export async function toggleLike(monsterId: string) {
     throw new Error("いいねの登録に失敗しました。");
   }
 }
+
+export async function getMonsters(page: number = 1, pageSize: number = 10) {
+  const skip = (page - 1) * pageSize;
+
+  try {
+    const monsters = await prisma.monster.findMany({
+      skip: skip,
+      take: pageSize,
+      orderBy: { createdAt: "desc" },
+    });
+    return monsters;
+  } catch (error) {
+    console.error("モンスターの取得に失敗しました。", error);
+    throw new Error("モンスターの取得に失敗しました。");
+  }
+}
