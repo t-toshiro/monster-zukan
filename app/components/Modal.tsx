@@ -1,48 +1,63 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { X } from "lucide-react"; // アイコン用
+import { useEffect } from "react";
+import { X } from "lucide-react";
 
 export default function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    // マウントされたら自動的にモーダルを開く
-    dialogRef.current?.showModal();
+    // モーダルオープン時はメイン画面のスクロールを止める
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, []);
 
-  // 閉じる処理 = ブラウザの履歴を1つ戻る
   const onDismiss = () => {
     router.back();
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target == dialogRef.current) onDismiss();
-  };
-
   return (
-    <dialog
-      ref={dialogRef}
-      onClick={handleClick}
-      onClose={onDismiss} // Escキーで閉じた時も戻る
-      className="backdrop:bg-black/80 bg-transparent p-0 w-full max-w-5xl outline-none"
-    >
-      <div className="relative w-full">
-        {/* 閉じるボタン（右上の×） */}
-        <button
-          onClick={onDismiss}
-          className="absolute right-4 top-4 z-50 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition"
+    // fixed で画面全体を覆うレイヤー。z-[60]でサイドバー(z-50)の上に配置。
+    <div className="fixed inset-0 z-[60] flex">
+      {/* 
+        ★ここがポイント！★
+        左側のサイドバー(w-64)と全く同じ幅の透明な「スペーサー」を置きます。
+        これにより、右側の黒背景エリアがサイドバーに被らず、
+        その中のモーダルが「サイドバーの右側エリアのど真ん中」に綺麗に配置されます。
+        （InstagramのPC版と同じ挙動になります）
+      */}
+      <div 
+        className="w-64 hidden md:block shrink-0 bg-transparent" 
+        onClick={onDismiss}
+      ></div>
+      
+      {/* 右側のメインエリア。背景を暗くする */}
+      <div 
+        className="flex-1 flex flex-col items-center justify-center bg-black/75 p-4 md:p-8 relative"
+        onClick={onDismiss} // 背景クリックで閉じる
+      >
+        {/* モーダル本体 */}
+        <div 
+          className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl flex flex-col shadow-2xl"
+          onClick={(e) => e.stopPropagation()} // 中身をクリックしても閉じないようにする
         >
-          <X size={24} />
-        </button>
+          {/* 閉じるボタン（枠の外、右上に配置） */}
+          <button
+            onClick={onDismiss}
+            className="absolute -top-12 right-0 z-50 p-2 text-white/80 hover:text-white transition-colors"
+          >
+            <X size={32} />
+          </button>
 
-        {/* モーダルの中身（詳細ページ）がここに入る */}
-        <div className="bg-white rounded-3xl overflow-hidden shadow-2xl">
-          {children}
+          {/* コンテンツエリア（角丸を維持して子要素をいっぱいに広げる） */}
+          <div className="w-full h-full rounded-2xl overflow-hidden flex">
+            {children}
+          </div>
         </div>
       </div>
-    </dialog>
+    </div>
   );
 }

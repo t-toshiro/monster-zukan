@@ -6,6 +6,9 @@ import DeleteButton from "./DeleteButton";
 import { useState } from "react";
 import MonsterEditForm from "./MonsterEditForm";
 import LikeButton from "./LikeButton";
+import CommentList from "./CommentList";
+import { Comment } from "@/generated/prisma/client";
+import CommentForm from "./CommentForm";
 
 type Props = {
   monster: {
@@ -16,6 +19,7 @@ type Props = {
     createdAt: Date;
     description: string;
     likes: { userId: string }[];
+    comments: Comment[];
   };
   currentUserId: string | undefined;
 };
@@ -28,9 +32,9 @@ export default function MonsterDetail({ monster, currentUserId }: Props) {
     : false;
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100 h-full">
-      {/* 左側: 画像エリア */}
-      <div className="w-full md:w-3/5 bg-gray-100 relative aspect-square md:aspect-auto md:min-h-150">
+    <div className="flex flex-col md:flex-row w-full h-full bg-white">
+      {/* 左側: 画像エリア (Instagram風の黒背景で中央配置) */}
+      <div className="w-full md:flex-1 bg-black relative flex items-center justify-center min-h-[50vh] md:min-h-0 border-r border-gray-100">
         {monster.imageUrl ? (
           <Image
             src={monster.imageUrl}
@@ -41,61 +45,77 @@ export default function MonsterDetail({ monster, currentUserId }: Props) {
             sizes="(max-width: 768px) 100vw, 60vw"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-300 bg-gray-50">
+          <div className="flex items-center justify-center h-full text-gray-400 bg-gray-900 w-full">
             No Image
           </div>
         )}
       </div>
 
-      {/* 右側: 情報エリア */}
-      <div className="p-8 md:p-12 md:w-2/5 flex flex-col justify-center bg-white/80 backdrop-blur-sm">
+      {/* 右側: 情報エリア（Instagram風レイアウト・固定幅） */}
+      <div className="w-full md:w-[400px] lg:w-[450px] flex flex-col bg-white shrink-0 h-full">
         {isEditing ? (
-          <MonsterEditForm
-            monster={monster}
-            onCancel={() => setEditing(false)}
-          />
+          <div className="p-8 overflow-y-auto">
+            <MonsterEditForm
+              monster={monster}
+              onCancel={() => setEditing(false)}
+            />
+          </div>
         ) : (
           <>
-            <div className="mb-auto">
-              <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
-                {monster.name}
-              </h1>
-
-              <div className="flex items-center gap-4 text-sm font-medium text-gray-500 mb-10 pb-6 border-b border-gray-100">
-                <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
-                  <Calendar size={16} className="text-blue-500" />
+            {/* 上部: スクロール可能なエリア（説明文 ＋ コメント一覧） */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-gray-200">
+              {/* モンスター名と日付 */}
+              <div className="mb-6 pb-4 border-b border-gray-100">
+                <h1 className="text-3xl font-black text-gray-900 mb-2 leading-tight">
+                  {monster.name}
+                </h1>
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
+                  <Calendar size={14} />
                   <span>
-                    {new Date(monster.createdAt).toLocaleDateString()} に発見
+                    {new Date(monster.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
 
-              <div className="prose prose-lg prose-blue max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {/* 説明文 */}
+              <div className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap mb-8">
                 <p>{monster.description}</p>
+              </div>
+
+              {/* コメント一覧 */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <CommentList comments={monster.comments || []} />
               </div>
             </div>
 
-            <div className="mt-12 pt-6">
-              <div className="w-full flex mb-4">
+            {/* 下部: 固定エリア（いいね ＋ コメント入力） */}
+            <div className="p-4 md:p-6 border-t border-gray-100 bg-white">
+              <div className="flex items-center justify-between mb-4">
                 <LikeButton
                   monsterId={monster.id}
                   initialLikesCount={likesCount}
                   initialIsLiked={isLikedByMe}
                 />
-              </div>
-              {monster.userId === currentUserId && (
-                <>
-                  <button
-                    onClick={() => setEditing(true)}
-                    className="p-3 rounded-full bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition"
-                  >
-                    ✏️
-                  </button>
 
-                  {/* 削除ボタンをここに配置 */}
-                  <DeleteButton id={monster.id} />
-                </>
-              )}
+                {/* 自分の投稿の場合の操作ボタン */}
+                {monster.userId === currentUserId && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditing(true)}
+                      className="p-2 rounded-full text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                      title="編集"
+                    >
+                      ✏️
+                    </button>
+                    <DeleteButton id={monster.id} />
+                  </div>
+                )}
+              </div>
+
+              {/* コメント入力フォーム */}
+              <div className="mt-2">
+                <CommentForm monsterId={monster.id} />
+              </div>
             </div>
           </>
         )}
