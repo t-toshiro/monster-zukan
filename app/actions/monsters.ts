@@ -27,11 +27,11 @@ export async function createMonster(formData: FormData) {
         userId: user.id,
       },
     });
+    revalidatePath("/");
   } catch (error) {
     console.error("モンスターの登録に失敗しました。", error);
     throw new Error("モンスターの登録に失敗しました。");
   }
-  redirect("/");
 }
 
 export async function deleteMonster(id: string) {

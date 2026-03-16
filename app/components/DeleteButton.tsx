@@ -4,8 +4,10 @@ import { useTransition } from "react";
 import { deleteMonster } from "../actions/monsters";
 import { Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function DeleteButton({ id }: { id: string }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const handleDelete = async () => {
     const confirmed = window.confirm("本当に削除しますか？");

@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default function MonsterInfiniteList({ initialMonsters }: Props) {
+  const blurDataUrl =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mO88B8AAqUB0Y/O2fQAAAAASUVORK5CYII=";
   const [monsters, setMonsters] = useState<Monster[]>(initialMonsters);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -55,6 +57,8 @@ export default function MonsterInfiniteList({ initialMonsters }: Props) {
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  placeholder="blur"
+                  blurDataURL={blurDataUrl}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">

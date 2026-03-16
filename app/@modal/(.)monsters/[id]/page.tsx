@@ -23,7 +23,7 @@ export default async function MonsterDetailPage({ params }: Props) {
   } = await supabase.auth.getUser();
 
   if (!monster) {
-    notFound();
+    return null;
   }
 
   return (
