@@ -15,12 +15,8 @@ model Monster {
   name        String
   description String
   imageUrl    String
-  
-  // 👇 ここを変更！Enumは後で追加できるので、まずはStringで確実に動かす
-  // type        MonsterType? 
-  type        String?      
-
-  hp          Int?
+  attribute    Attribute  @default(NORMAL)
+  rarity     Rarity  @default(STAR_1)
   isAiGenerated Boolean @default(false)
   aiPrompt      String?
 
@@ -72,4 +68,20 @@ model Collection {
   createdAt DateTime @default(now())
   
   @@unique([userId, monsterId])
+}
+
+enum Attribute {
+  FIRE
+  WATER
+  GRASS
+  ELECTRIC
+  NORMAL
+}
+
+enum Rarity {
+  STAR_1
+  STAR_2
+  STAR_3
+  STAR_4
+  STAR_5
 }

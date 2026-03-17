@@ -1,5 +1,6 @@
 "use server";
 
+import { Attribute, Rarity } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -16,6 +17,8 @@ export async function createMonster(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const imageUrl = formData.get("imageUrl") as string;
+  const attribute = formData.get("attribute") as Attribute;
+  const rarity = formData.get("rarity") as Rarity;
 
   try {
     //DBに登録
@@ -24,6 +27,8 @@ export async function createMonster(formData: FormData) {
         name,
         description,
         imageUrl,
+        attribute,
+        rarity,
         userId: user.id,
       },
     });
@@ -65,6 +70,9 @@ export async function updataMonster(id: string, formData: FormData) {
   if (!user) redirect("/login");
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
+  const attribute = formData.get("attribute") as Attribute;
+  const rarity = formData.get("rarity") as Rarity;
+
   try {
     const monster = await prisma.monster.findUnique({
       where: { id },
@@ -75,7 +83,7 @@ export async function updataMonster(id: string, formData: FormData) {
 
     await prisma.monster.update({
       where: { id },
-      data: { name, description },
+      data: { name, description, attribute, rarity },
     });
     revalidatePath("/");
   } catch (error) {

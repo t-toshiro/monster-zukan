@@ -1,14 +1,18 @@
+// app/components/MonsterEditForm.tsx
 "use client";
 
 import toast from "react-hot-toast";
 import { updataMonster } from "../actions/monsters";
 import { useTransition } from "react";
+import { Attribute, Rarity } from "@/generated/prisma/enums";
 
 type Props = {
   monster: {
     id: string;
     name: string;
     description: string;
+    attribute: Attribute;
+    rarity: Rarity;
   };
   onCancel: () => void;
 };
@@ -30,7 +34,7 @@ export default function MonsterEditForm({ monster, onCancel }: Props) {
   };
   return (
     <form onSubmit={handleSubmit} className="flex flex-col h-full">
-      <div className="mb-6">
+      <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           名前
         </label>
@@ -43,6 +47,42 @@ export default function MonsterEditForm({ monster, onCancel }: Props) {
         />
       </div>
 
+      <div className="mb-4 grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            属性
+          </label>
+          <select
+            name="attribute"
+            defaultValue={monster.attribute}
+            className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white"
+          >
+            <option value="NORMAL">ノーマル</option>
+            <option value="FIRE">炎</option>
+            <option value="WATER">水</option>
+            <option value="GRASS">草</option>
+            <option value="ELECTRIC">雷</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            レア度
+          </label>
+          <select
+            name="rarity"
+            defaultValue={monster.rarity}
+            className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white"
+          >
+            <option value="STAR_1">★1</option>
+            <option value="STAR_2">★2</option>
+            <option value="STAR_3">★3</option>
+            <option value="STAR_4">★4</option>
+            <option value="STAR_5">★5</option>
+          </select>
+        </div>
+      </div>
+
       <div className="mb-auto">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           説明
@@ -51,7 +91,7 @@ export default function MonsterEditForm({ monster, onCancel }: Props) {
           name="description"
           defaultValue={monster.description}
           required
-          rows={6}
+          rows={5}
           className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
         />
       </div>

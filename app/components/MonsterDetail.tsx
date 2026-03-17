@@ -8,7 +8,24 @@ import MonsterEditForm from "./MonsterEditForm";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
 import { Comment } from "@/generated/prisma/client";
+import { Attribute, Rarity } from "@/generated/prisma/enums";
 import CommentForm from "./CommentForm";
+
+const ATTRIBUTE_MAP: Record<Attribute, { label: string; color: string }> = {
+  FIRE: { label: "炎", color: "bg-red-100 text-red-700 border-red-200" },
+  WATER: { label: "水", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  GRASS: { label: "草", color: "bg-green-100 text-green-700 border-green-200" },
+  ELECTRIC: { label: "雷", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  NORMAL: { label: "ノーマル", color: "bg-gray-100 text-gray-700 border-gray-200" },
+};
+
+const RARITY_MAP: Record<Rarity, string> = {
+  STAR_1: "★",
+  STAR_2: "★★",
+  STAR_3: "★★★",
+  STAR_4: "★★★★",
+  STAR_5: "★★★★★",
+};
 
 type Props = {
   monster: {
@@ -18,6 +35,8 @@ type Props = {
     imageUrl: string | null;
     createdAt: Date;
     description: string;
+    attribute: Attribute;
+    rarity: Rarity;
     likes: { userId: string }[];
     comments: Comment[];
   };
@@ -30,6 +49,9 @@ export default function MonsterDetail({ monster, currentUserId }: Props) {
   const isLikedByMe = currentUserId
     ? monster.likes.some((like) => like.userId === currentUserId)
     : false;
+
+  const attrData = ATTRIBUTE_MAP[monster.attribute] || ATTRIBUTE_MAP.NORMAL;
+  const rarityStars = RARITY_MAP[monster.rarity] || "★";
 
   return (
     <div className="flex flex-col md:flex-row w-full h-full bg-white">
@@ -64,16 +86,27 @@ export default function MonsterDetail({ monster, currentUserId }: Props) {
           <>
             {/* 上部: スクロール可能なエリア（説明文 ＋ コメント一覧） */}
             <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-gray-200">
-              {/* モンスター名と日付 */}
+              {/* モンスター名と日付・属性・レア度 */}
               <div className="mb-6 pb-4 border-b border-gray-100">
-                <h1 className="text-3xl font-black text-gray-900 mb-2 leading-tight">
-                  {monster.name}
-                </h1>
-                <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
-                  <Calendar size={14} />
-                  <span>
-                    {new Date(monster.createdAt).toLocaleDateString()}
+                <div className="flex items-center justify-between mb-2">
+                  <h1 className="text-3xl font-black text-gray-900 leading-tight">
+                    {monster.name}
+                  </h1>
+                  <span className="text-xl text-yellow-400 tracking-widest" title={`レアリティ: ${monster.rarity}`}>
+                    {rarityStars}
                   </span>
+                </div>
+                
+                <div className="flex items-center gap-3 mt-3">
+                  <span className={`px-3 py-1 text-xs font-bold rounded-full border ${attrData.color}`}>
+                    {attrData.label}
+                  </span>
+                  <div className="flex items-center gap-1 text-xs font-medium text-gray-400">
+                    <Calendar size={14} />
+                    <span>
+                      {new Date(monster.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
               </div>
 

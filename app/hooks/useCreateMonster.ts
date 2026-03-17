@@ -13,6 +13,8 @@ export default function useCreateMonster() {
     file: File,
     name: string,
     description: string,
+    attribute: string,
+    rarity: string,
   ) => {
     setIsUploading(true);
     const loadingToastId = toast.loading("アップロード中...");
@@ -42,6 +44,9 @@ export default function useCreateMonster() {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("imageUrl", publicUrl);
+      formData.append("attribute", attribute);
+      formData.append("rarity", rarity);
+
       await createMonster(formData);
 
       toast.success("アップロード完了！", { id: loadingToastId });

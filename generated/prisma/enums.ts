@@ -9,7 +9,23 @@
 * 🟢 You can import this file directly.
 */
 
+export const Attribute = {
+  FIRE: 'FIRE',
+  WATER: 'WATER',
+  GRASS: 'GRASS',
+  ELECTRIC: 'ELECTRIC',
+  NORMAL: 'NORMAL'
+} as const
+
+export type Attribute = (typeof Attribute)[keyof typeof Attribute]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const Rarity = {
+  STAR_1: 'STAR_1',
+  STAR_2: 'STAR_2',
+  STAR_3: 'STAR_3',
+  STAR_4: 'STAR_4',
+  STAR_5: 'STAR_5'
+} as const
+
+export type Rarity = (typeof Rarity)[keyof typeof Rarity]

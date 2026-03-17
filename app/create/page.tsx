@@ -20,7 +20,9 @@ export default function CreatePage() {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
-    uploadMonster(file, name, description);
+    const attribute = formData.get("attribute") as string;
+    const rarity = formData.get("rarity") as string;
+    uploadMonster(file, name, description, attribute, rarity);
   };
 
   return (
@@ -44,6 +46,48 @@ export default function CreatePage() {
             required
             className="w-full border rounded px-3 py-2 bg-gray-50"
           />
+        </div>
+        <div>
+          <label
+            htmlFor="attribute"
+            className="block font-bold mb-1 text-gray-700"
+          >
+            属性
+          </label>
+          <select
+            id="attribute"
+            name="attribute"
+            required
+            className="w-full border rounded px-3 py-2 bg-gray-50"
+          >
+            <option value="NORMAL">ノーマル</option>
+            <option value="FIRE">ほのお</option>
+            <option value="WATER">みず</option>
+            <option value="GRASS">くさ</option>
+            <option value="ELECTRIC">でんき</option>
+          </select>
+        </div>
+
+        {/* 💡 追加: レア度の選択 */}
+        <div>
+          <label
+            htmlFor="rarity"
+            className="block font-bold mb-1 text-gray-700"
+          >
+            レア度
+          </label>
+          <select
+            id="rarity"
+            name="rarity"
+            required
+            className="w-full border rounded px-3 py-2 bg-gray-50"
+          >
+            <option value="STAR_1">★1 (よくいる)</option>
+            <option value="STAR_2">★2 (めずらしい)</option>
+            <option value="STAR_3">★3 (かなりレア)</option>
+            <option value="STAR_4">★4 (激レア)</option>
+            <option value="STAR_5">★5 (伝説級)</option>
+          </select>
         </div>
 
         <div>

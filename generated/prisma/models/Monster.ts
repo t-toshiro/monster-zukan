@@ -20,18 +20,8 @@ export type MonsterModel = runtime.Types.Result.DefaultSelection<Prisma.$Monster
 
 export type AggregateMonster = {
   _count: MonsterCountAggregateOutputType | null
-  _avg: MonsterAvgAggregateOutputType | null
-  _sum: MonsterSumAggregateOutputType | null
   _min: MonsterMinAggregateOutputType | null
   _max: MonsterMaxAggregateOutputType | null
-}
-
-export type MonsterAvgAggregateOutputType = {
-  hp: number | null
-}
-
-export type MonsterSumAggregateOutputType = {
-  hp: number | null
 }
 
 export type MonsterMinAggregateOutputType = {
@@ -39,8 +29,8 @@ export type MonsterMinAggregateOutputType = {
   name: string | null
   description: string | null
   imageUrl: string | null
-  type: string | null
-  hp: number | null
+  attribute: $Enums.Attribute | null
+  rarity: $Enums.Rarity | null
   isAiGenerated: boolean | null
   aiPrompt: string | null
   userId: string | null
@@ -53,8 +43,8 @@ export type MonsterMaxAggregateOutputType = {
   name: string | null
   description: string | null
   imageUrl: string | null
-  type: string | null
-  hp: number | null
+  attribute: $Enums.Attribute | null
+  rarity: $Enums.Rarity | null
   isAiGenerated: boolean | null
   aiPrompt: string | null
   userId: string | null
@@ -67,8 +57,8 @@ export type MonsterCountAggregateOutputType = {
   name: number
   description: number
   imageUrl: number
-  type: number
-  hp: number
+  attribute: number
+  rarity: number
   isAiGenerated: number
   aiPrompt: number
   userId: number
@@ -78,21 +68,13 @@ export type MonsterCountAggregateOutputType = {
 }
 
 
-export type MonsterAvgAggregateInputType = {
-  hp?: true
-}
-
-export type MonsterSumAggregateInputType = {
-  hp?: true
-}
-
 export type MonsterMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
   imageUrl?: true
-  type?: true
-  hp?: true
+  attribute?: true
+  rarity?: true
   isAiGenerated?: true
   aiPrompt?: true
   userId?: true
@@ -105,8 +87,8 @@ export type MonsterMaxAggregateInputType = {
   name?: true
   description?: true
   imageUrl?: true
-  type?: true
-  hp?: true
+  attribute?: true
+  rarity?: true
   isAiGenerated?: true
   aiPrompt?: true
   userId?: true
@@ -119,8 +101,8 @@ export type MonsterCountAggregateInputType = {
   name?: true
   description?: true
   imageUrl?: true
-  type?: true
-  hp?: true
+  attribute?: true
+  rarity?: true
   isAiGenerated?: true
   aiPrompt?: true
   userId?: true
@@ -167,18 +149,6 @@ export type MonsterAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: MonsterAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: MonsterSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: MonsterMinAggregateInputType
@@ -209,8 +179,6 @@ export type MonsterGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: MonsterCountAggregateInputType | true
-  _avg?: MonsterAvgAggregateInputType
-  _sum?: MonsterSumAggregateInputType
   _min?: MonsterMinAggregateInputType
   _max?: MonsterMaxAggregateInputType
 }
@@ -220,16 +188,14 @@ export type MonsterGroupByOutputType = {
   name: string
   description: string
   imageUrl: string
-  type: string | null
-  hp: number | null
+  attribute: $Enums.Attribute
+  rarity: $Enums.Rarity
   isAiGenerated: boolean
   aiPrompt: string | null
   userId: string
   createdAt: Date
   updatedAt: Date
   _count: MonsterCountAggregateOutputType | null
-  _avg: MonsterAvgAggregateOutputType | null
-  _sum: MonsterSumAggregateOutputType | null
   _min: MonsterMinAggregateOutputType | null
   _max: MonsterMaxAggregateOutputType | null
 }
@@ -257,8 +223,8 @@ export type MonsterWhereInput = {
   name?: Prisma.StringFilter<"Monster"> | string
   description?: Prisma.StringFilter<"Monster"> | string
   imageUrl?: Prisma.StringFilter<"Monster"> | string
-  type?: Prisma.StringNullableFilter<"Monster"> | string | null
-  hp?: Prisma.IntNullableFilter<"Monster"> | number | null
+  attribute?: Prisma.EnumAttributeFilter<"Monster"> | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFilter<"Monster"> | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFilter<"Monster"> | boolean
   aiPrompt?: Prisma.StringNullableFilter<"Monster"> | string | null
   userId?: Prisma.StringFilter<"Monster"> | string
@@ -274,8 +240,8 @@ export type MonsterOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  type?: Prisma.SortOrderInput | Prisma.SortOrder
-  hp?: Prisma.SortOrderInput | Prisma.SortOrder
+  attribute?: Prisma.SortOrder
+  rarity?: Prisma.SortOrder
   isAiGenerated?: Prisma.SortOrder
   aiPrompt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -294,8 +260,8 @@ export type MonsterWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Monster"> | string
   description?: Prisma.StringFilter<"Monster"> | string
   imageUrl?: Prisma.StringFilter<"Monster"> | string
-  type?: Prisma.StringNullableFilter<"Monster"> | string | null
-  hp?: Prisma.IntNullableFilter<"Monster"> | number | null
+  attribute?: Prisma.EnumAttributeFilter<"Monster"> | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFilter<"Monster"> | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFilter<"Monster"> | boolean
   aiPrompt?: Prisma.StringNullableFilter<"Monster"> | string | null
   userId?: Prisma.StringFilter<"Monster"> | string
@@ -311,18 +277,16 @@ export type MonsterOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  type?: Prisma.SortOrderInput | Prisma.SortOrder
-  hp?: Prisma.SortOrderInput | Prisma.SortOrder
+  attribute?: Prisma.SortOrder
+  rarity?: Prisma.SortOrder
   isAiGenerated?: Prisma.SortOrder
   aiPrompt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MonsterCountOrderByAggregateInput
-  _avg?: Prisma.MonsterAvgOrderByAggregateInput
   _max?: Prisma.MonsterMaxOrderByAggregateInput
   _min?: Prisma.MonsterMinOrderByAggregateInput
-  _sum?: Prisma.MonsterSumOrderByAggregateInput
 }
 
 export type MonsterScalarWhereWithAggregatesInput = {
@@ -333,8 +297,8 @@ export type MonsterScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Monster"> | string
   description?: Prisma.StringWithAggregatesFilter<"Monster"> | string
   imageUrl?: Prisma.StringWithAggregatesFilter<"Monster"> | string
-  type?: Prisma.StringNullableWithAggregatesFilter<"Monster"> | string | null
-  hp?: Prisma.IntNullableWithAggregatesFilter<"Monster"> | number | null
+  attribute?: Prisma.EnumAttributeWithAggregatesFilter<"Monster"> | $Enums.Attribute
+  rarity?: Prisma.EnumRarityWithAggregatesFilter<"Monster"> | $Enums.Rarity
   isAiGenerated?: Prisma.BoolWithAggregatesFilter<"Monster"> | boolean
   aiPrompt?: Prisma.StringNullableWithAggregatesFilter<"Monster"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Monster"> | string
@@ -347,8 +311,8 @@ export type MonsterCreateInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -364,8 +328,8 @@ export type MonsterUncheckedCreateInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -381,8 +345,8 @@ export type MonsterUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -398,8 +362,8 @@ export type MonsterUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -415,8 +379,8 @@ export type MonsterCreateManyInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -429,8 +393,8 @@ export type MonsterUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -443,8 +407,8 @@ export type MonsterUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -457,8 +421,8 @@ export type MonsterCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  type?: Prisma.SortOrder
-  hp?: Prisma.SortOrder
+  attribute?: Prisma.SortOrder
+  rarity?: Prisma.SortOrder
   isAiGenerated?: Prisma.SortOrder
   aiPrompt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -466,17 +430,13 @@ export type MonsterCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type MonsterAvgOrderByAggregateInput = {
-  hp?: Prisma.SortOrder
-}
-
 export type MonsterMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  type?: Prisma.SortOrder
-  hp?: Prisma.SortOrder
+  attribute?: Prisma.SortOrder
+  rarity?: Prisma.SortOrder
   isAiGenerated?: Prisma.SortOrder
   aiPrompt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -489,17 +449,13 @@ export type MonsterMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
-  type?: Prisma.SortOrder
-  hp?: Prisma.SortOrder
+  attribute?: Prisma.SortOrder
+  rarity?: Prisma.SortOrder
   isAiGenerated?: Prisma.SortOrder
   aiPrompt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type MonsterSumOrderByAggregateInput = {
-  hp?: Prisma.SortOrder
 }
 
 export type MonsterScalarRelationFilter = {
@@ -511,20 +467,20 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type EnumAttributeFieldUpdateOperationsInput = {
+  set?: $Enums.Attribute
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type EnumRarityFieldUpdateOperationsInput = {
+  set?: $Enums.Rarity
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -578,8 +534,8 @@ export type MonsterCreateWithoutLikesInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -594,8 +550,8 @@ export type MonsterUncheckedCreateWithoutLikesInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -626,8 +582,8 @@ export type MonsterUpdateWithoutLikesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -642,8 +598,8 @@ export type MonsterUncheckedUpdateWithoutLikesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -658,8 +614,8 @@ export type MonsterCreateWithoutCommentsInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -674,8 +630,8 @@ export type MonsterUncheckedCreateWithoutCommentsInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -706,8 +662,8 @@ export type MonsterUpdateWithoutCommentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -722,8 +678,8 @@ export type MonsterUncheckedUpdateWithoutCommentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -738,8 +694,8 @@ export type MonsterCreateWithoutCollectedByInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -754,8 +710,8 @@ export type MonsterUncheckedCreateWithoutCollectedByInput = {
   name: string
   description: string
   imageUrl: string
-  type?: string | null
-  hp?: number | null
+  attribute?: $Enums.Attribute
+  rarity?: $Enums.Rarity
   isAiGenerated?: boolean
   aiPrompt?: string | null
   userId: string
@@ -786,8 +742,8 @@ export type MonsterUpdateWithoutCollectedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -802,8 +758,8 @@ export type MonsterUncheckedUpdateWithoutCollectedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  attribute?: Prisma.EnumAttributeFieldUpdateOperationsInput | $Enums.Attribute
+  rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
   isAiGenerated?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aiPrompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -867,8 +823,8 @@ export type MonsterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   description?: boolean
   imageUrl?: boolean
-  type?: boolean
-  hp?: boolean
+  attribute?: boolean
+  rarity?: boolean
   isAiGenerated?: boolean
   aiPrompt?: boolean
   userId?: boolean
@@ -885,8 +841,8 @@ export type MonsterSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   imageUrl?: boolean
-  type?: boolean
-  hp?: boolean
+  attribute?: boolean
+  rarity?: boolean
   isAiGenerated?: boolean
   aiPrompt?: boolean
   userId?: boolean
@@ -899,8 +855,8 @@ export type MonsterSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   imageUrl?: boolean
-  type?: boolean
-  hp?: boolean
+  attribute?: boolean
+  rarity?: boolean
   isAiGenerated?: boolean
   aiPrompt?: boolean
   userId?: boolean
@@ -913,8 +869,8 @@ export type MonsterSelectScalar = {
   name?: boolean
   description?: boolean
   imageUrl?: boolean
-  type?: boolean
-  hp?: boolean
+  attribute?: boolean
+  rarity?: boolean
   isAiGenerated?: boolean
   aiPrompt?: boolean
   userId?: boolean
@@ -922,7 +878,7 @@ export type MonsterSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MonsterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "imageUrl" | "type" | "hp" | "isAiGenerated" | "aiPrompt" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["monster"]>
+export type MonsterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "imageUrl" | "attribute" | "rarity" | "isAiGenerated" | "aiPrompt" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["monster"]>
 export type MonsterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   likes?: boolean | Prisma.Monster$likesArgs<ExtArgs>
   comments?: boolean | Prisma.Monster$commentsArgs<ExtArgs>
@@ -944,8 +900,8 @@ export type $MonsterPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     name: string
     description: string
     imageUrl: string
-    type: string | null
-    hp: number | null
+    attribute: $Enums.Attribute
+    rarity: $Enums.Rarity
     isAiGenerated: boolean
     aiPrompt: string | null
     userId: string
@@ -1381,8 +1337,8 @@ export interface MonsterFieldRefs {
   readonly name: Prisma.FieldRef<"Monster", 'String'>
   readonly description: Prisma.FieldRef<"Monster", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Monster", 'String'>
-  readonly type: Prisma.FieldRef<"Monster", 'String'>
-  readonly hp: Prisma.FieldRef<"Monster", 'Int'>
+  readonly attribute: Prisma.FieldRef<"Monster", 'Attribute'>
+  readonly rarity: Prisma.FieldRef<"Monster", 'Rarity'>
   readonly isAiGenerated: Prisma.FieldRef<"Monster", 'Boolean'>
   readonly aiPrompt: Prisma.FieldRef<"Monster", 'String'>
   readonly userId: Prisma.FieldRef<"Monster", 'String'>
