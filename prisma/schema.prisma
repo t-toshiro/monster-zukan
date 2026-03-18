@@ -3,11 +3,12 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
-  // url は prisma.config.ts で管理しているので不要
+  extensions = [vector]
 }
 
 model Monster {
@@ -20,9 +21,10 @@ model Monster {
   isAiGenerated Boolean @default(false)
   aiPrompt      String?
 
-  // 👇 【重要】Userとのリレーションを削除し、ただのID(文字列)にする
+
+  embedding     Unsupported("vector(1536)")?
   userId      String   
-  // user       User     @relation(...) 👈 削除！
+
 
   likes       Like[]
   comments    Comment[]

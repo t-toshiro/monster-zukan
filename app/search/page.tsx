@@ -2,24 +2,40 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "@/app/components/SearchBar";
+import { Attribute, Rarity } from "@/generated/prisma/enums";
+import { vectorSearchMonster } from "../actions/monsters";
 
 type Props = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    mode?: "normal" | "ai";
+    q?: string;
+    attr?: string;
+    rarity?: string;
+  }>;
 };
 
 export default async function SearchPage({ searchParams }: Props) {
-  // URLの "?q=キーワード" を取得
+  // URLのパラメータを取得
   const params = await searchParams;
+  const mode = (params.mode as "normal" | "ai") || "normal";
   const keyword = params.q || "";
+  const attrStr = params.attr;
+  const rarityStr = params.rarity;
 
-  // Prismaで検索（名前、または説明文にキーワードが含まれるものを探す）
-  const monsters = await prisma.monster.findMany({
-    where: {
-      OR: [
+  let monsters: any[] = [];
+
+  if (mode === "ai" && keyword) {
+    monsters = await vectorSearchMonster(keyword);
+  } else if (mode === "normal") {
+    // 通常検索モード
+    const whereClause: any = {};
+
+    if (keyword) {
+      whereClause.OR = [
         {
           name: {
             contains: keyword,
-            mode: "insensitive", // 大文字・小文字を区別しない
+            mode: "insensitive",
           },
         },
         {
@@ -28,10 +44,22 @@ export default async function SearchPage({ searchParams }: Props) {
             mode: "insensitive",
           },
         },
-      ],
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      ];
+    }
+
+    if (attrStr) {
+      whereClause.attribute = attrStr as Attribute;
+    }
+
+    if (rarityStr) {
+      whereClause.rarity = rarityStr as Rarity;
+    }
+
+    monsters = await prisma.monster.findMany({
+      where: whereClause,
+      orderBy: { createdAt: "desc" },
+    });
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 md:py-12">
@@ -40,15 +68,15 @@ export default async function SearchPage({ searchParams }: Props) {
         <SearchBar />
       </div>
 
-      {keyword && (
+      {(keyword || attrStr || rarityStr) && (
         <div className="text-center text-sm text-gray-500 mb-8 font-medium">
-          「{keyword}」の検索結果 ({monsters.length}件)
+          {mode === "ai" ? "AI検索結果" : "検索結果"} ({monsters.length}件)
         </div>
       )}
 
       {monsters.length === 0 ? (
         <div className="text-center text-gray-400 py-20 text-sm md:text-base">
-          モンスターが見つかりませんでした。
+          条件に一致するモンスターが見つかりませんでした。
         </div>
       ) : (
         <ul className="grid grid-cols-3 gap-1">

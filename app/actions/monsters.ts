@@ -5,6 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function createMonster(formData: FormData) {
   //ユーザーチェック
@@ -19,10 +24,13 @@ export async function createMonster(formData: FormData) {
   const imageUrl = formData.get("imageUrl") as string;
   const attribute = formData.get("attribute") as Attribute;
   const rarity = formData.get("rarity") as Rarity;
-
   try {
-    //DBに登録
-    await prisma.monster.create({
+    const embeddingResponse = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: description,
+    });
+    const embedding = embeddingResponse.data[0].embedding;
+    const newMonster = await prisma.monster.create({
       data: {
         name,
         description,
@@ -32,6 +40,12 @@ export async function createMonster(formData: FormData) {
         userId: user.id,
       },
     });
+    const embeddingString = `[${embedding.join(",")}]`;
+    await prisma.$executeRaw`
+    UPDATE "Monster"
+    SET embedding = ${embeddingString} :: vector
+    WHERE id = ${newMonster.id}
+    `;
     revalidatePath("/");
   } catch (error) {
     console.error("モンスターの登録に失敗しました。", error);
@@ -139,5 +153,39 @@ export async function getMonsters(page: number = 1, pageSize: number = 10) {
   } catch (error) {
     console.error("モンスターの取得に失敗しました。", error);
     throw new Error("モンスターの取得に失敗しました。");
+  }
+}
+
+export async function vectorSearchMonster(keyword: string) {
+  if (!keyword) return [];
+  try {
+    const embeddingResponse = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: keyword,
+    });
+    const embedding = embeddingResponse.data[0].embedding;
+    const embeddingString = `[${embedding.join(",")}]`;
+    const rawResults = await prisma.$queryRaw<{ id: string }[]>`
+      SELECT id
+      FROM "Monster"
+      WHERE embedding IS NOT NULL
+      ORDER BY embedding <=> ${embeddingString}::vector
+      LIMIT 3;
+    `;
+
+    const ids = rawResults.map((r) => r.id);
+    if (ids.length === 0) return [];
+    const monsters = await prisma.monster.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+    const sortedMonsters = ids
+      .map((id) => monsters.find((m) => m.id === id))
+      .filter(Boolean);
+    return sortedMonsters;
+  } catch (error) {
+    console.error("ベクトル検索エラー:", error);
+    throw new Error("検索に失敗しました。");
   }
 }

@@ -7,8 +7,6 @@ import useCreateMonster from "../hooks/useCreateMonster";
 import ImagePicker from "../components/ImagePicker";
 
 export default function CreatePage() {
-  // 画像のURLを保存しておく場所
-
   const [file, setFile] = useState<File | null>(null);
   const onImageSelect = (compressedFile: File | null) => {
     setFile(compressedFile);
@@ -68,7 +66,6 @@ export default function CreatePage() {
           </select>
         </div>
 
-        {/* 💡 追加: レア度の選択 */}
         <div>
           <label
             htmlFor="rarity"
@@ -82,11 +79,11 @@ export default function CreatePage() {
             required
             className="w-full border rounded px-3 py-2 bg-gray-50"
           >
-            <option value="STAR_1">★1 (よくいる)</option>
-            <option value="STAR_2">★2 (めずらしい)</option>
-            <option value="STAR_3">★3 (かなりレア)</option>
-            <option value="STAR_4">★4 (激レア)</option>
-            <option value="STAR_5">★5 (伝説級)</option>
+            <option value="STAR_1">★1</option>
+            <option value="STAR_2">★2</option>
+            <option value="STAR_3">★3</option>
+            <option value="STAR_4">★4</option>
+            <option value="STAR_5">★5</option>
           </select>
         </div>
 
