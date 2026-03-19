@@ -6,6 +6,7 @@ export const revalidate = 0;
 export default async function HomePage() {
   const pageSize = 12;
   const monsters = await getMonsters(1, pageSize);
+  const listKey = monsters.length > 0 ? monsters.length : "empty";
 
   return (
     <div className="max-w-4xl mx-auto px-8 py-12">
@@ -18,7 +19,7 @@ export default async function HomePage() {
       )}
 
       {/* 無限スクロール・もっと見るリスト */}
-      <MonsterInfiniteList initialMonsters={monsters} />
+      <MonsterInfiniteList key={listKey} initialMonsters={monsters} />
     </div>
   );
 }

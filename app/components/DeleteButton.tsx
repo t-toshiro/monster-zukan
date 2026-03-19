@@ -16,6 +16,8 @@ export default function DeleteButton({ id }: { id: string }) {
       try {
         await deleteMonster(id);
         toast.success("削除しました");
+        router.push("/");
+        router.refresh();
       } catch (error) {
         toast.error("削除に失敗しました");
       }
