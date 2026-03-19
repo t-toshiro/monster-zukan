@@ -1,212 +1,116 @@
-# Puctee Monorepo
+# Monster Zukan (モンスター図鑑)
 
-A full-stack social planning application with built-in accountability features. This monorepo contains both the FastAPI backend and iOS SwiftUI frontend for Puctee, a platform that helps friends coordinate meetups with location-based check-ins and trust scoring.
+ユーザーが作成したオリジナルの「モンスター」を共有し、閲覧・検索できる画像投稿型のSNSアプリケーションです。Next.js (App Router)、Supabase、Prismaを使用して構築されており、OpenAIのベクトルエンベディングを用いた類似検索機能も備えています。
 
-## 📁 Repository Structure
+## 📁 プロジェクト構成
 
 ```
-puctee-mono/
-├── puctee-backend/          # FastAPI backend service
-│   ├── app/                 # Application code
-│   ├── alembic/             # Database migrations
-│   ├── tests/               # Backend tests
-│   └── README.md            # Backend documentation
-│
-└── puctee-ios/              # iOS SwiftUI application
-    ├── puctee/              # App source code
-    ├── puctee.xcodeproj/    # Xcode project
-    ├── pucteeTests/         # iOS tests
-    └── README.md            # iOS documentation
+monster-zukan/
+├── app/                  # Next.js App Router (各ページ、コンポーネント、Server Actions)
+│   ├── actions/          # サーバーサイド処理 (DB操作, API呼び出しなど)
+│   ├── components/       # 再利用可能なUIコンポーネント
+│   └── (その他各ルート)
+├── lib/                  # 共通ユーティリティ (Prisma Client初期化など)
+├── prisma/               # Prisma Schemaとマイグレーションファイル
+├── utils/                # 外部サービスの設定 (Supabase Clientなど)
+└── public/               # 静的ファイル
 ```
 
-## 🚀 Quick Start
+## 🚀 クイックスタート
 
-### Prerequisites
+### 前提条件
 
-**Backend:**
+- Node.js 18.x以上
+- npm または yarn
+- Supabase アカウント (PostgreSQL, Storage, Auth)
+- OpenAI API キー (ベクトル検索用)
 
-- Python 3.11+
-- PostgreSQL 13+
-- AWS account (for S3 and other services)
+### セットアップ手順
 
-**iOS:**
-
-- macOS
-- Xcode (latest stable version)
-- iOS 18.5+ (deployment target)
-
-### Setup
-
-#### 1. Clone the Repository
+#### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/KojiroTsugaru/puctee-mono.git
-cd puctee-mono
+git clone https://github.com/t-toshiro/monster-zukan.git
+cd monster-zukan
 ```
 
-#### 2. Backend Setup
+#### 2. パッケージのインストール
 
 ```bash
-cd puctee-backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment variables
-cp .env.example .env
-# Edit .env with your credentials
-
-# Run database migrations
-alembic upgrade head
-
-# Start the server
-uvicorn app.main:app --reload
+npm install
 ```
 
-The API will be available at `http://127.0.0.1:8000`
+#### 3. 環境変数の設定
 
-**Backend Documentation:** See [puctee-backend/README.md](./puctee-backend/README.md)
+`.env.example` などの内容を参考に、プロジェクト直下に `.env.local` ファイルを作成し、必要な環境変数を設定します。
 
-#### 3. iOS Setup
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Database
+DATABASE_URL=your_database_connection_string
+DIRECT_URL=your_database_direct_connection_string
+
+# OpenAI
+OPENAI_API_KEY=your_openai_api_key
+```
+
+#### 4. データベースのセットアップ
+
+Prismaを使用してデータベーススキーマを反映させ、クライアントを生成します。
 
 ```bash
-cd puctee-ios
-
-# Open in Xcode
-open puctee.xcodeproj
+npm run prisma db push
+npm run prisma generate
 ```
 
-In Xcode:
-
-1. Resolve Swift Package dependencies (`File > Packages > Resolve Package Versions`)
-2. Configure environment settings if needed
-3. Select a simulator or device
-4. Build and run (⌘R)
-
-**iOS Documentation:** See [puctee-ios/README.md](./puctee-ios/README.md)
-
-## 🏗️ Architecture
-
-```mermaid
-flowchart TB
-    subgraph Client
-        iOS["iOS App (SwiftUI)"]
-    end
-
-    subgraph AWS
-        APIG["API Gateway"]
-        Lambda["Lambda (FastAPI)"]
-        RDS["PostgreSQL"]
-        S3["S3 Storage"]
-        SM["Secrets Manager"]
-    end
-
-    APNs["Apple Push Notifications"]
-
-    iOS -->|HTTPS/JSON| APIG
-    APIG --> Lambda
-    Lambda --> RDS
-    Lambda --> S3
-    Lambda --> SM
-    Lambda -->|Push| APNs
-    APNs -->|Notifications| iOS
-```
-
-## ✨ Features
-
-- **User Authentication**: JWT-based secure authentication
-- **Friend System**: Send/accept friend requests with bidirectional relationships
-- **Plan Management**: Create events, invite participants, track attendance
-- **Location Services**: GPS-based check-ins for plan verification
-- **Accountability System**: Penalty management with proof submission
-- **Trust Scoring**: Gamified reliability tracking based on punctuality
-- **Real-time Notifications**: Push notifications via APNs
-- **Modern UI**: Built with SwiftUI for native iOS experience
-
-## 🛠️ Tech Stack
-
-### Backend
-
-- **Framework**: FastAPI (Python 3.11+)
-- **Database**: PostgreSQL with SQLAlchemy (Async ORM)
-- **Authentication**: JWT tokens with bcrypt
-- **Notifications**: Apple Push Notification service (APNs)
-- **Cloud**: AWS (Lambda, API Gateway, RDS, S3, Secrets Manager)
-- **Testing**: pytest
-
-### iOS
-
-- **Language**: Swift
-- **UI Framework**: SwiftUI
-- **Dependency Management**: Swift Package Manager
-- **Security**: Keychain for token storage
-- **Networking**: Custom API client with JWT handling
-
-## 🧪 Testing
-
-### Backend Tests
+#### 5. 開発サーバーの起動
 
 ```bash
-cd puctee-backend
-pytest
-# or
-./run_tests.sh
+npm run dev
 ```
 
-### iOS Tests
+サーバーが起動したら、ブラウザで `http://localhost:3000` にアクセスしてください。
 
-Run tests in Xcode:
+## ✨ 主な機能
 
-- Unit tests: `⌘U`
-- UI tests: Select test target and run
+- **ユーザー認証**: Supabase Authによる安全なログイン/サインアップ機能
+- **投稿機能**: 属性(炎・水など)やレアリティ、画像と説明文を組み合わせたモンスターの登録
+- **画像管理**: 画像投稿時に自動圧縮・リサイズを行い、Supabase Storageへアップロード
+- **インタラクション**:
+  - 各モンスターへの「いいね」機能
+  - 投稿に対する「コメント」機能
+- **ベクトル検索 (AI検索)**: OpenAIのEmbedding APIを用いた、自然言語による類似モンスター検索機能
+- **無限スクロール**: ページネーションではなく、スクロールでシームレスに一覧表示するUI
+- **レスポンシブデザイン**: Tailwind CSSによるモバイル・PC両対応のレイアウト
 
-## 📚 API Documentation
+## 🛠️ テクノロジースタック
 
-When the backend is running, visit:
+### フロントエンド
 
-- **Swagger UI**: http://127.0.0.1:8000/docs
-- **ReDoc**: http://127.0.0.1:8000/redoc
+- **フレームワーク**: Next.js 16 (App Router)
+- **UIライブラリ**: React 19
+- **スタイリング**: Tailwind CSS 4, Tailwind Merge
+- **アイコン**: Lucide React
+- **その他**: React Hot Toast (通知), browser-image-compression (画像圧縮)
 
-## 🚢 Deployment
+### バックエンド / データベース
 
-### Backend
+- **BaaS**: Supabase (Auth, Storage, PostgreSQL)
+- **ORM**: Prisma (PgBouncer対応)
+- **AI / 検索**: OpenAI API (text-embedding-3-small)
 
-The backend is deployed to AWS Lambda using the provided scripts:
+## 🤝 コントリビューション
 
-```bash
-cd puctee-backend
-./deploy_app.sh
-```
+このプロジェクトは、Next.js 16 の App Router と最新のインフラストラクチャを組み合わせたモダンなフルスタックWebアプリケーションのポートフォリオとして作成されています。
+Server Actions や React 19 の最新機能の活用例としてご参照ください。
 
-### iOS
+## 📝 ライセンス
 
-Build and distribute via Xcode:
-
-1. Archive the app (`Product > Archive`)
-2. Distribute to App Store Connect or TestFlight
-
-## 🤝 Contributing
-
-This is a portfolio project demonstrating:
-
-- Modern full-stack development
-- Serverless architecture
-- Complex database relationships
-- Real-time notifications
-- Native iOS development with SwiftUI
-
-## 📝 License
-
-This project is part of a portfolio showcase. Feel free to use as reference for your own projects.
-
-## 📧 Contact
-
-**GitHub**: [@KojiroTsugaru](https://github.com/KojiroTsugaru)
+このプロジェクトは学習用・ポートフォリオ用のプロジェクトです。ご自身のプロジェクトの参考として自由にご活用ください。
 
 ---
 
-**Built with ❤️ using FastAPI, SwiftUI, and modern development practices**
+**Built with ❤️ using Next.js, Supabase, Prisma, and OpenAI**
