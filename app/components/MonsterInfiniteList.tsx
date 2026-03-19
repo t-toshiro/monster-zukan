@@ -39,12 +39,12 @@ export default function MonsterInfiniteList({ initialMonsters }: Props) {
   };
 
   return (
-    <div className="space-y-8">
-      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+    <div className="w-full max-w-5xl mx-auto py-12 px-4 md:px-8">
+      <ul className="grid grid-cols-3 gap-1 md:gap-6">
         {monsters.map((monster) => (
           <li
             key={monster.id}
-            className="relative aspect-square bg-gray-200 group overflow-hidden"
+            className="relative aspect-square bg-gray-200 group overflow-hidden rounded-sm md:rounded-lg cursor-pointer shadow-sm hover:shadow-md transition-all"
           >
             <Link
               href={`/monsters/${monster.id}`}
@@ -55,18 +55,20 @@ export default function MonsterInfiniteList({ initialMonsters }: Props) {
                   src={monster.imageUrl}
                   alt={monster.name}
                   fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 768px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                   placeholder="blur"
                   blurDataURL={blurDataUrl}
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="flex items-center justify-center h-full text-xs text-gray-400">
                   No Image
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <p className="text-white font-bold">{monster.name}</p>
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                <p className="text-white font-bold text-sm md:text-lg drop-shadow-md truncate px-2">
+                  {monster.name}
+                </p>
               </div>
             </Link>
           </li>
