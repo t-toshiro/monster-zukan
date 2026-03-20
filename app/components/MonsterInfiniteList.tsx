@@ -76,7 +76,7 @@ export default function MonsterInfiniteList({ initialMonsters }: Props) {
       </ul>
 
       {hasMore && (
-        <div className="flex justify-center pb-8">
+        <div className="flex justify-center mt-12 pb-8">
           <button
             onClick={loadMore}
             disabled={loading}

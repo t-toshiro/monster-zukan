@@ -86,7 +86,7 @@ npm run dev
 - **無限スクロール**: ページネーションではなく、スクロールでシームレスに一覧表示するUI
 - **レスポンシブデザイン**: Tailwind CSSによるモバイル・PC両対応のレイアウト
 
-## 🛠️ テクノロジースタック
+## 🛠️ 技術スタック
 
 ### フロントエンド
 
@@ -101,11 +101,6 @@ npm run dev
 - **BaaS**: Supabase (Auth, Storage, PostgreSQL)
 - **ORM**: Prisma (PgBouncer対応)
 - **AI / 検索**: OpenAI API (text-embedding-3-small)
-
-## 🤝 コントリビューション
-
-このプロジェクトは、Next.js 16 の App Router と最新のインフラストラクチャを組み合わせたモダンなフルスタックWebアプリケーションのポートフォリオとして作成されています。
-Server Actions や React 19 の最新機能の活用例としてご参照ください。
 
 ## 📝 ライセンス
 
